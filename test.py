@@ -62,6 +62,9 @@ while True:
             objectInField = False
             numPeds += 1
             print(str(numPeds) + " people have passed through here")
+            
+            r = requests.post("https://dbdevelopment.epizy.com/cchack/index.php", data = {'numPeds':numPeds})
+            
             maxBright = False
             start = time.time()
             end = 2
