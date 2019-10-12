@@ -15,12 +15,18 @@ class Node:
             if(self.lSens.isDaytime() == False):
                 if(self.dSens.checkDistance() == DistanceSensor.FAR):
                     self.led.setBrightness(LED.BASE_BRIGHTNESS)
+                else:
+                    self.manageBrightnessWithDistance()
+
+    def manageBrightnessWithDistance(self):
+
 
 
 class DistanceSensor:
   
     #class attribute for distance value when nothing detected
     FAR = 9999999
+    MAX_DISTANCE = 4000
 
     # initializer / instance attributes
     def __init__(self, bus, address):
