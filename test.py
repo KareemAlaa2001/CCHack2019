@@ -1,4 +1,5 @@
 from matrix11x7 import Matrix11x7
+from matrix11x7.fonts import font3x5
 import time
 
 matrix11x7 = Matrix11x7()
