@@ -5,12 +5,15 @@ from matrix11x7 import Matrix11x7
 from ltr559 import LTR559
 import smbus2
 from firebase import firebase
+from bme280 import BME280
 
 matrix11x7 = Matrix11x7()
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
 tof.open()
 tof.start_ranging(1)
 ltr559 = LTR559()
+bus = SMBus(1)  
+bme280 = BME280(i2c_dev=bus)
 
 objectInField = False
 maxBright = False
@@ -33,6 +36,12 @@ setBrightness(brightness)
 matrix11x7.show()
 
 while True:
+    temperature = bme280.get_temperature()
+    pressure = bme280.get_pressure()
+    humidity = bme280.get_humidity()
+
+    telemResult = firebase.patch(myUrl + '/light1', {'numPeds' : numPeds, 'temp' : temperature, 'pressure' : pressure, 'humidity' : humidity})
+
     distance_in_mm = tof.get_distance()
     backgroundLight = ltr559.get_lux()
     if backgroundLight > 10.0:
@@ -43,7 +52,7 @@ while True:
         elif distance_in_mm > 200 and objectInField == True: # They've left
             objectInField = False
             numPeds += 1
-            result = firebase.patch(myUrl + '/Peds', {'numPeds' : numPeds})
+            result = firebase.patch(myUrl + '/light1', {'numPeds' : numPeds})
             print(str(numPeds) + " people have passed through here")
         
     else:
