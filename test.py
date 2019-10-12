@@ -4,26 +4,12 @@ import VL53L1X
 from matrix11x7 import Matrix11x7
 from ltr559 import LTR559
 import smbus2
-from firebase import Firebase
 
 matrix11x7 = Matrix11x7()
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
 tof.open()
 tof.start_ranging(1)
 ltr559 = LTR559()
-
-config = {
-  "apiKey": "AIzaSyBArxusayeHo1z9VOF_jcunCB0jUcHQN4U",
-  "authDomain": "cchack2019-50339.firebaseapp.com",
-  "databaseURL": "https://cchack2019-50339.firebaseio.com/",
-}
-
-firebase = firebase.Firebase(config)
-db = firebase.database()
-
-users = db.child("Peds").get()
-
-print(users.val())
 
 objectInField = False
 maxBright = False
