@@ -7,3 +7,4 @@ matrix11x7 = Matrix11x7()
 
 # Avoid retina-searage!
 matrix11x7.set_brightness(1)
+matrix11x7.show()
