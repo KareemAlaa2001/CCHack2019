@@ -4,7 +4,7 @@ import VL53L1X
 from matrix11x7 import Matrix11x7
 from ltr559 import LTR559
 import smbus2
-import requests
+from firebase import firebase
 
 matrix11x7 = Matrix11x7()
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
@@ -14,6 +14,9 @@ ltr559 = LTR559()
 
 objectInField = False
 maxBright = False
+myUrl = 'https://cchack2019-50339.firebaseio.com'
+firebase = firebase.FirebaseApplication(myUrl, None)
+
 
 def convertDistanceToBrightness(distance):
     brightness = float(distance/600.0)
@@ -40,6 +43,7 @@ while True:
         elif distance_in_mm > 200 and objectInField == True: # They've left
             objectInField = False
             numPeds += 1
+            result = firebase.patch(myUrl + '/Peds', {'numPeds' : numPeds})
             print(str(numPeds) + " people have passed through here")
         
     else:
@@ -61,10 +65,8 @@ while True:
         elif distance_in_mm > 200 and objectInField == True: # They've left
             objectInField = False
             numPeds += 1
+            result = firebase.patch(myUrl + '/Peds', {'numPeds' : numPeds})
             print(str(numPeds) + " people have passed through here")
-            
-            r = requests.post("https://dbdevelopment.epizy.com/cchack/index.php", data = {'numPeds':numPeds})
-            
             maxBright = False
             start = time.time()
             end = 2
