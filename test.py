@@ -4,6 +4,7 @@ import VL53L1X
 from matrix11x7 import Matrix11x7
 from ltr559 import LTR559
 import smbus2
+import requests
 
 matrix11x7 = Matrix11x7()
 tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
