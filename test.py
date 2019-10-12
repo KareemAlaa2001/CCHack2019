@@ -3,7 +3,7 @@ import math
 import VL53L1X
 from matrix11x7 import Matrix11x7
 from ltr559 import LTR559
-import smbus2
+from smbus2 import SMBus
 from firebase import firebase
 from bme280 import BME280
 
@@ -40,10 +40,9 @@ while True:
     pressure = bme280.get_pressure()
     humidity = bme280.get_humidity()
 
-    telemResult = firebase.patch(myUrl + '/light1', {'numPeds' : numPeds, 'temp' : temperature, 'pressure' : pressure, 'humidity' : humidity})
-
     distance_in_mm = tof.get_distance()
     backgroundLight = ltr559.get_lux()
+
     if backgroundLight > 10.0:
         setBrightness(0)
         matrix11x7.show()
@@ -53,6 +52,7 @@ while True:
             objectInField = False
             numPeds += 1
             result = firebase.patch(myUrl + '/light1', {'numPeds' : numPeds})
+            telemResult = firebase.patch(myUrl + '/light1', {'numPeds' : numPeds, 'temp' : temperature, 'pressure' : pressure, 'humidity' : humidity})
             print(str(numPeds) + " people have passed through here")
         
     else:
@@ -75,6 +75,7 @@ while True:
             objectInField = False
             numPeds += 1
             result = firebase.patch(myUrl + '/Peds', {'numPeds' : numPeds})
+            telemResult = firebase.patch(myUrl + '/light1', {'numPeds' : numPeds, 'temp' : temperature, 'pressure' : pressure, 'humidity' : humidity})
             print(str(numPeds) + " people have passed through here")
             maxBright = False
             start = time.time()
