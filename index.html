@@ -139,30 +139,46 @@
               center: {lat: 50.931144, lng: -1.399275},
               mapTypeId: 'satellite'
             });
-
+              
+            var marker = new google.maps.Marker({
+              position: {lat: 50.937647, lng: -1.395602},
+              map: map,
+              title: 'Building 16'
+            });
+              
+            var numLamps = 5;
 
             lampPostLongValues = [];
-
-            var locationRef = firebase.database().ref('light1/long'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
-            locationRef.on('value', function(snapshot) {
-                lampPostLongValues.push(snapshot.val());
-            });
+              
+              for(var i = 1; i < numLamps + 1; i++) {
+                  var locationRef = firebase.database().ref('light' + i + '/long'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+                    locationRef.on('value', function(snapshot) {
+                        lampPostLongValues.push(snapshot.val());
+                    });
+              }
+            
 
 
             lampPostLatValues = [];
 
-            var locationRef = firebase.database().ref('light1/lat'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
-            locationRef.on('value', function(snapshot) {
-                lampPostLatValues.push(snapshot.val());
-            });
+            for(var i = 1; i < numLamps + 1; i++) {
+                  var locationRef = firebase.database().ref('light' + i + '/lat'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+                locationRef.on('value', function(snapshot) {
+                    lampPostLatValues.push(snapshot.val());
+                });
+              }
             
 
             lampPostNumPeds = [];
+              
+              for(var i = 1; i < numLamps + 1; i++) {
+                  var locationRef = firebase.database().ref('light' + i + '/numPeds'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+                    locationRef.on('value', function(snapshot) {
+                        lampPostNumPeds.push(snapshot.val());
+                    });
+              }
 
-            var locationRef = firebase.database().ref('light1/numPeds'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
-            locationRef.on('value', function(snapshot) {
-                lampPostNumPeds.push(snapshot.val());
-            });
+            
 
 
             //prevents execution before database has provided values, very important
