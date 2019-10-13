@@ -1,9 +1,3 @@
-<?php
-    if($_POST[]) {
-
-    }
-?>
-<!DOCTYPE html>
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,28 +40,43 @@
                 font-size:30px;
                 font-weight: bold;
             }
-            
+            #map {
+                height: 100vh;
+                position: absolute;
+                top: 100%; 
+              }
+            .bigdiv {
+                height: 100vh;
+            }
         </style>
     </head>
     
     <body>
-        <div class="container-fluid nav bg-dark text-light">
-            <div class="container center-text">
-                <h1>lyte <span class="subtext">- it's lit.</span></h1>
+        <div class="bigdiv">
+            <div class="container-fluid nav bg-dark text-light">
+                <div class="container center-text">
+                    <h1>lyte <span class="subtext">- it's lit.</span></h1>
+                </div>
+
             </div>
-            
+
+            <div class="container bg-dark text-light">
+                <br>
+                <h2 class="big">Realtime data | lyte 1</h2>
+                <p><i class="fas fa-map-marker-alt" style="color: red"></i> Southampton, UK</p>
+                <hr style="border-color: white">
+                <p><span class="standout"><i class="fas fa-walking"></i> <span id="numPeds"></span></span></p> 
+                <p><span class="standout"><i class="fas fa-thermometer-half"></i> <span id="temperature"></span>°C</span></p> 
+                <p><span class="standout"><i class="fas fa-cloud"></i> <span id="pressure"></span> mPa</span></p> 
+                <p><span class="standout"><i class="fas fa-tint"></i> <span id="humidity"></span> %</span></p> 
+                <br>
+                <br>
+                <div class="center-text"><i class="fas fa-chevron-down"></i></div>
+            </div>
         </div>
         
-        <div class="container bg-dark text-light">
-            <br>
-            <h2 class="big">Realtime data | lyte 1</h2>
-            <p><i class="fas fa-map-marker-alt" style="color: red"></i> Southampton, UK</p>
-            <hr style="border-color: white">
-            <p><span class="standout"><i class="fas fa-walking"></i> <span id="numPeds"></span></span></p> 
-            <p><span class="standout"><i class="fas fa-thermometer-half"></i> <span id="temperature"></span>°C</span></p> 
-            <p><span class="standout"><i class="fas fa-cloud"></i> <span id="pressure"></span> mPa</span></p> 
-            <p><span class="standout"><i class="fas fa-tint"></i> <span id="humidity"></span> %</span></p> 
-        </div>
+        <div id="mapContainer" style="height: 100vh;"></div>
+        
         
         <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-analytics.js"></script>
@@ -107,7 +116,100 @@
         </script>
         
         <script>
-            
-        </script>
+
+          // This example requires the Visualization library. Include the libraries=visualization
+          // parameter when you first load the API. For example:
+          // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
+
+          var map, heatmap;
+
+          function initMap() {
+            map = new google.maps.Map(document.getElementById('mapContainer'), {
+              zoom: 13,
+              center: {lat: 50.931144, lng: -1.399275},
+              mapTypeId: 'satellite'
+            });
+
+            heatmap = new google.maps.visualization.HeatmapLayer({
+              data: getPoints(),
+              map: map
+            });
+          }
+
+          function toggleHeatmap() {
+            heatmap.setMap(heatmap.getMap() ? null : map);
+          }
+
+
+          function changeGradient() {
+            var gradient = [
+              'rgba(0, 255, 255, 0)',
+              'rgba(0, 255, 255, 1)',
+              'rgba(0, 191, 255, 1)',
+              'rgba(0, 127, 255, 1)',
+              'rgba(0, 63, 255, 1)',
+              'rgba(0, 0, 255, 1)',
+              'rgba(0, 0, 223, 1)',
+              'rgba(0, 0, 191, 1)',
+              'rgba(0, 0, 159, 1)',
+              'rgba(0, 0, 127, 1)',
+              'rgba(63, 0, 91, 1)',
+              'rgba(127, 0, 63, 1)',
+              'rgba(191, 0, 31, 1)',
+              'rgba(255, 0, 0, 1)'
+            ]
+            heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+          }
+
+          function changeRadius() {
+            heatmap.set('radius', heatmap.get('radius') ? null : 20);
+          }
+
+          function changeOpacity() {
+            heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+          }
+
+          // Heatmap data: fill from firebase
+          //50.938000, -1.396500
+          function getPoints() {
+
+            /*
+            lampPostLongValues = [];
+
+            var locationRef = firebase.database().ref('light1/long'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+            locationRef.on('value', functon(snapshot)) {
+                lampPostLongValues.push(snapshot.val());
+            });
+
+
+            lampPostLatValues = [];
+
+            var locationRef = firebase.database().ref('light1/lat'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+            locationRef.on('value', functon(snapshot)) {
+                lampPostLatValues.push(snapshot.val());
+            });
+
+
+            lampPostNumPeds = [];
+
+            var locationRef = firebase.database().ref('light1/numPeds'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+            locationRef.on('value', functon(snapshot)) {
+                lampPostNumPeds.push(snapshot.val());
+            });
+            */
+
+            lampPostObjects = [];
+            var i;
+            for (i = 0; i < 10 /*lampPostLongValues.length*/ ; i++) {
+                lampPostObjects[i]={location: new google.maps.LatLng(50.938000 /*lampPostLatValues[i]*/, -1.396+(i/10000)) /*lampPostLongValues[i]*/, weight: 1 /*lampPostNumPeds[i]*/}; //make long lat work with format from server
+                //weight is linear, 1 is normal, will have to adjust, maybe divide numPeds by 10?
+            }
+            return lampPostObjects;
+
+          }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAO91_04pTpgGKX1CkNwUruRngNN-jCiM&libraries=visualization&callback=initMap">
+    </script>
     </body>
 </html>
