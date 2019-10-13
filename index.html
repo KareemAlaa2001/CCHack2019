@@ -65,7 +65,7 @@
         <div class="bigdiv">
             <div class="container-fluid nav bg-dark text-light">
                 <div class="container center-text">
-                    <h1>lyte <span class="subtext">- it's lit.</span></h1>
+                    <h1>Lyte <span class="subtext">- it's lit.</span></h1>
                 </div>
 
             </div>
@@ -171,7 +171,7 @@
 
             lampPostNumPeds = [];
               
-              for(var i = 1; i < numLamps + 1; i++) {
+              for(var i = 1; i < numLamps; i++) {
                   var locationRef = firebase.database().ref('light' + i + '/numPeds'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
                     locationRef.on('value', function(snapshot) {
                         lampPostNumPeds.push(snapshot.val());
