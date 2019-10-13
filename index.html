@@ -122,7 +122,7 @@
           // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
 
           var map, heatmap;
-
+          
           function initMap() {
             map = new google.maps.Map(document.getElementById('mapContainer'), {
               zoom: 13,
@@ -130,10 +130,38 @@
               mapTypeId: 'satellite'
             });
 
-            heatmap = new google.maps.visualization.HeatmapLayer({
-              data: getPoints(),
-              map: map
+
+            lampPostLongValues = [];
+
+            var locationRef = firebase.database().ref('light1/long'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+            locationRef.on('value', function(snapshot) {
+                lampPostLongValues.push(snapshot.val());
             });
+
+
+            lampPostLatValues = [];
+
+            var locationRef = firebase.database().ref('light1/lat'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+            locationRef.on('value', function(snapshot) {
+                lampPostLatValues.push(snapshot.val());
+            });
+            
+
+            lampPostNumPeds = [];
+
+            var locationRef = firebase.database().ref('light1/numPeds'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
+            locationRef.on('value', function(snapshot) {
+                lampPostNumPeds.push(snapshot.val());
+            });
+
+
+            //prevents execution before database has provided values, very important
+            setTimeout(function(){
+              heatmap = new google.maps.visualization.HeatmapLayer({
+                data: getPoints(),
+                map: map
+              });
+            }, 2000);
           }
 
           function toggleHeatmap() {
@@ -169,41 +197,18 @@
             heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
           }
 
-          // Heatmap data: fill from firebase
+          //Heatmap data: fills from firebase
           //50.938000, -1.396500
           function getPoints() {
 
-            /*
-            lampPostLongValues = [];
-
-            var locationRef = firebase.database().ref('light1/long'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
-            locationRef.on('value', functon(snapshot)) {
-                lampPostLongValues.push(snapshot.val());
-            });
-
-
-            lampPostLatValues = [];
-
-            var locationRef = firebase.database().ref('light1/lat'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
-            locationRef.on('value', functon(snapshot)) {
-                lampPostLatValues.push(snapshot.val());
-            });
-
-
-            lampPostNumPeds = [];
-
-            var locationRef = firebase.database().ref('light1/numPeds'); //should improve so that it's not light1 but a general object or something? for when multiple lights in database
-            locationRef.on('value', functon(snapshot)) {
-                lampPostNumPeds.push(snapshot.val());
-            });
-            */
-
             lampPostObjects = [];
             var i;
-            for (i = 0; i < 10 /*lampPostLongValues.length*/ ; i++) {
-                lampPostObjects[i]={location: new google.maps.LatLng(50.938000 /*lampPostLatValues[i]*/, -1.396+(i/10000)) /*lampPostLongValues[i]*/, weight: 1 /*lampPostNumPeds[i]*/}; //make long lat work with format from server
+
+            for (i = 0; i < lampPostLongValues.length ; i++) {
+                lampPostObjects.push({location: new google.maps.LatLng( parseFloat(lampPostLatValues[i]), parseFloat(lampPostLongValues[i])), weight: parseInt(lampPostNumPeds[i])}); //make long lat work with format from server
                 //weight is linear, 1 is normal, will have to adjust, maybe divide numPeds by 10?
             }
+
             return lampPostObjects;
 
           }
