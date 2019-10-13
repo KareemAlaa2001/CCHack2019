@@ -1,0 +1,113 @@
+<?php
+    if($_POST[]) {
+
+    }
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://kit.fontawesome.com/2dd2b96fac.js" crossorigin="anonymous"></script>
+        
+
+        
+        <style>
+            .subtext {
+                
+                font-size: 20px;
+                
+            }
+            
+            .center-text {
+                text-align: center;
+            }
+            
+            body {
+                background-color: #343a40;
+            }
+            
+            .big {
+                font-size: 30px;
+            }
+            
+            .standout {
+                color: #88dbb7;
+                font-size:30px;
+                font-weight: bold;
+            }
+            
+        </style>
+    </head>
+    
+    <body>
+        <div class="container-fluid nav bg-dark text-light">
+            <div class="container center-text">
+                <h1>lyte <span class="subtext">- it's lit.</span></h1>
+            </div>
+            
+        </div>
+        
+        <div class="container bg-dark text-light">
+            <br>
+            <h2 class="big">Realtime data | lyte 1</h2>
+            <p><i class="fas fa-map-marker-alt" style="color: red"></i> Southampton, UK</p>
+            <hr style="border-color: white">
+            <p><span class="standout"><i class="fas fa-walking"></i> <span id="numPeds"></span></span></p> 
+            <p><span class="standout"><i class="fas fa-thermometer-half"></i> <span id="temperature"></span>°C</span></p> 
+            <p><span class="standout"><i class="fas fa-cloud"></i> <span id="pressure"></span> mPa</span></p> 
+            <p><span class="standout"><i class="fas fa-tint"></i> <span id="humidity"></span> %</span></p> 
+        </div>
+        
+        <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+        
+        <script>
+          // Your web app's Firebase configuration
+          var firebaseConfig = {
+            apiKey: "AIzaSyBArxusayeHo1z9VOF_jcunCB0jUcHQN4U",
+            authDomain: "cchack2019-50339.firebaseapp.com",
+            databaseURL: "https://cchack2019-50339.firebaseio.com",
+            storageBucket: "cchack2019-50339.appspot.com"
+          };
+          // Initialize Firebase
+          firebase.initializeApp(firebaseConfig);
+          var database = firebase.database();
+
+            var numPedsRef = firebase.database().ref('light1/numPeds');
+            numPedsRef.on('value', function(snapshot) {
+                $("#numPeds").html(snapshot.val())
+            });
+            
+            var temperatureRef = firebase.database().ref('light1/temp');
+            temperatureRef.on('value', function(snapshot) {
+                $("#temperature").html(Math.round(snapshot.val() * 10) / 10)
+            });
+            
+            var pressureRef = firebase.database().ref('light1/pressure');
+            pressureRef.on('value', function(snapshot) {
+                $("#pressure").html(Math.round(snapshot.val() * 10) / 10)
+            });
+            
+            var humidityRef = firebase.database().ref('light1/humidity');
+            humidityRef.on('value', function(snapshot) {
+                $("#humidity").html(Math.round(snapshot.val() * 10) / 10)
+            });
+        </script>
+        
+        <script>
+            
+        </script>
+    </body>
+</html>
