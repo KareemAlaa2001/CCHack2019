@@ -1,6 +1,2 @@
 # CCHack2019
-Project built for cchack 2019 by a team of n00bs, project description change pending
-
-Kevin is flaky
-
-Nathan is weak
+Hackathon project, sustainability themed. Foundation for a smart streetlight system built. Used Python, JavaScript, Firebase.
